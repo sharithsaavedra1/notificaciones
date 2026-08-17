@@ -1,0 +1,319 @@
+name: ${COMPOSE_PROJECT_NAME:-design-software}
+
+# =============================================================================
+# BASE DE DATOS ÚNICA - todos los módulos apuntan aquí
+#
+# USO:
+#   1. Levantar la base de datos:
+#      docker compose up postgres -d
+#
+#   2. Aplicar changelogs de un módulo:
+#      docker compose --profile tooling run --rm liquibase-<modulo> update
+#
+#   Módulos disponibles:
+#     liquibase-academic | liquibase-actors   | liquibase-audit
+#     liquibase-document | liquibase-iam      | liquibase-monitoring
+#     liquibase-reference| liquibase-scheduling| liquibase-training
+#     liquibase-notification
+# =============================================================================
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ---------------------------------------------------------------------------
+  liquibase-academic:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-academic-management-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-actors:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-actors-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-audit:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-audit-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-document:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-document-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-iam:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-iam-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-monitoring:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-monitoring-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-reference:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-reference-data-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-scheduling:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-scheduling-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-training:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-training-environment-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  liquibase-notification:
+    build: .
+    image: ds-liquibase:latest
+    profiles: [tooling]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    volumes:
+      - ${DB_REPOS_DIR:-../../database}/design-software-notification-db:/workspace
+    entrypoint:
+      - liquibase
+      - --search-path=/workspace
+      - --changeLogFile=changelog/changelog-master.yaml
+      - --url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+
+  # ===========================================================================
+  # EDGE / GATEWAY (Traefik) — ADR-007. Entry point unico de la app.
+  # ===========================================================================
+  traefik:
+    image: traefik:v3.1
+    profiles: [edge]
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --api.dashboard=true
+      - --api.insecure=true
+    ports:
+      - "${EDGE_PORT:-18080}:80"
+      - "${EDGE_DASHBOARD_PORT:-18090}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # ===========================================================================
+  # OBSERVABILIDAD (OpenTelemetry + Grafana LGTM) — ADR-008.
+  # ===========================================================================
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.109.0
+    profiles: [observability]
+    command: ["--config=/etc/otel/config.yaml"]
+    volumes:
+      - ./observability/otel-collector.yaml:/etc/otel/config.yaml:ro
+    ports:
+      - "${OTLP_GRPC_PORT:-4317}:4317"
+      - "${OTLP_HTTP_PORT:-4318}:4318"
+
+  tempo:
+    image: grafana/tempo:2.6.0
+    profiles: [observability]
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo_data:/var/tempo
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    profiles: [observability]
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  loki:
+    image: grafana/loki:3.2.0
+    profiles: [observability]
+    command: ["-config.file=/etc/loki/config.yaml"]
+    volumes:
+      - ./observability/loki-config.yaml:/etc/loki/config.yaml:ro
+      - loki_data:/loki
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    profiles: [observability]
+    depends_on: [tempo, prometheus, loki]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - ./observability/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      - grafana_data:/var/lib/grafana
+
+  # ===========================================================================
+  # MENSAJERIA (RabbitMQ) + SMTP local (MailHog) — perfil 'broker'. ADR-001/008.
+  # Servicios internos: amqp rabbitmq:5672 · smtp mailhog:1025.
+  # ===========================================================================
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    profiles: [broker]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-app}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-app}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    profiles: [broker]
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_UI_PORT:-18025}:8025"
+
+volumes:
+  postgres_data:
+  tempo_data:
+  loki_data:
+  grafana_data:
+  rabbitmq_data:

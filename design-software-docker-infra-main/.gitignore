@@ -1,0 +1,11 @@
+# Secretos por ambiente (NO versionar) — usar .env.example como plantilla
+.env
+.env.develop
+.env.qa
+.env.staging
+.env.main
+# Binarios / drivers (los provee la imagen liquibase)
+*.jar
+# Backups y temporales
+*.bak
+*.tmp
