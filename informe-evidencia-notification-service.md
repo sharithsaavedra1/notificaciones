@@ -216,7 +216,7 @@ La actividad de reconocimiento demostró la solidez de la infraestructura en Doc
 
 
 <img width="1126" height="745" alt="Captura de pantalla 2026-08-16 202435" src="https://github.com/user-attachments/assets/60c7fb6e-366b-437b-ba84-ec489e70ce32" />
-
+ link video : https://drive.google.com/file/d/1hVSJII4VaP1cm1Ht_-vzTdaT2P5bDiDk/view?usp=sharing
 
 
 
