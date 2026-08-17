@@ -207,7 +207,6 @@ Para enriquecer la arquitectura sin modificar el código fuente actual del proye
 La actividad de reconocimiento demostró la solidez de la infraestructura en Docker y el diseño del modelo relacional en PostgreSQL gestionado por Liquibase. A través de este informe y la grabación en video, se evidencia el cumplimiento riguroso y transparente de los requerimientos para `notification-service`.
 
 
-<img width="1892" height="955" alt="Captura de pantalla 2026-08-16 195210" src="https://github.com/user-attachments/assets/8d190151-ec7f-4849-aa26-6a7250f77d91" />
 
 
 <img width="1056" height="923" alt="Captura de pantalla 2026-08-16 202404" src="https://github.com/user-attachments/assets/2bf785dc-e20d-4fc0-a9a2-05b5cfe54c88" />
